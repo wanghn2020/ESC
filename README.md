@@ -1,6 +1,4 @@
 # ESC
 BLDC_TEST
 
-tttt
-
-eeee
+测试中文
