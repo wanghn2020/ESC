@@ -22,7 +22,6 @@ void DRV8305_Init(void)
 	spiTxBuf[0] = 0x16;//bit8:7 = 10, PWM with one input.
 	spiTxBuf[1] = 0x3b;//write HS Gate Drive Control (Address = 0x7)
 	HAL_SPI_TransmitReceive(&hspi1, spiTxBuf, spiRxBuf, 2, 50);
-
 }
 
 
@@ -60,19 +59,68 @@ void Clear_DRV8305_Fault(void)
 
 }
 
-
-void Phase_Align(void)
+/*
+ * INHA: PA10
+ * INLA: PB15
+ * INHB: PA9
+ * INLB: PB14
+ * INHC: PA8
+ * INLC: PB13
+ */
+void Phase_Align(void)//INLA:INHB:INLB:INHC = 1110
 {
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15|GPIO_PIN_14, GPIO_PIN_SET);//INLA = 1, INLB = 1
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);//INHC = 0
 }
 
-void Phase_Stop(void)
+void Phase1_AB(void)//INLA:INHB:INLB:INHC = 0110
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);//INLB = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);//INHC = 0
+}
+
+void Phase2_CB(void)//INLA:INHB:INLB:INHC = 0100
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0, INLB = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);//INHC = 0
+}
+
+void Phase3_CA(void)//INLA:INHB:INLB:INHC = 1100
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);//INLA = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);//INLB = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);//INHC = 0
+}
+
+void Phase4_BA(void)//INLA:INHB:INLB:INHC = 1000
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);//INLA = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0, INHC = 0
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);//INLB = 0
+}
+
+void Phase5_BC(void)//INLA:INHB:INLB:INHC = 1010
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_SET);//INLA = 1, INLB = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0, INHC = 0
+}
+
+void Phase6_AC(void)//INLA:INHB:INLB:INHC = 0010
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0, INHC = 0
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);//INLB = 1
+}
+
+void Phase_Stop(void)//INLA:INHB:INLB:INHC = 0000
 {
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15|GPIO_PIN_14, GPIO_PIN_RESET);//INLA = 0, INLB = 0
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0, INHC = 0
-
 }
 
 
