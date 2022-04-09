@@ -20,6 +20,7 @@
 #include "main.h"
 #include "adc.h"
 #include "can.h"
+#include "dma.h"
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"
@@ -97,8 +98,22 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
+  MX_DMA_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+  TIM1->CCR3 = 15;//speed = CCR3 / 1024
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+
+  DRV8305_Init();
+  HAL_Delay(200);
+  for (int i = 0; i<12; i++)
+  {
+	  Read_DRV8305_REG();
+	  Phase_Align();
+	  HAL_Delay(1000);
+	  Phase_Stop();
+	  HAL_Delay(1500);
+  }
 
   /* USER CODE END 2 */
 
@@ -109,7 +124,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  ClearFault();
+	Clear_DRV8305_Fault();
   }
   /* USER CODE END 3 */
 }
