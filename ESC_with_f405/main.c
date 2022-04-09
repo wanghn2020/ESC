@@ -101,16 +101,16 @@ int main(void)
   MX_DMA_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-  TIM1->CCR3 = 15;//speed = CCR3 / 1024
+  TIM1->CCR3 = 20;//speed = CCR3 / 1024
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
   DRV8305_Init();
   HAL_Delay(200);
   for (int i = 0; i<12; i++)
   {
-	  Read_DRV8305_REG();
+	  Read_DRV8305_REG(HS_Gate_Drive_Control_REG);
 	  Phase_Align();
-	  HAL_Delay(1000);
+	  HAL_Delay(300);
 	  Phase_Stop();
 	  HAL_Delay(1500);
   }
