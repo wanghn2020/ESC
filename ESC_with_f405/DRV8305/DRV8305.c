@@ -5,6 +5,8 @@
 #include "gpio.h"
 
 
+#define one_bit_change
+
 uint8_t spiRxBuf[2], spiTxBuf[2];
 uint8_t usbTxBuf[20] = "Hello World!!!\r\n";
 
@@ -67,6 +69,9 @@ void Clear_DRV8305_Fault(void)
  * INHC: PA8
  * INLC: PB13
  */
+
+#ifndef one_bit_change
+
 void Phase_Align(void)//INLA:INHB:INLB:INHC = 1110
 {
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15|GPIO_PIN_14, GPIO_PIN_SET);//INLA = 1, INLB = 1
@@ -82,11 +87,24 @@ void Phase1_AB(void)//INLA:INHB:INLB:INHC = 0110
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);//INHC = 0
 }
 
+void Phase12_AB_CB(void)//INLA:INHB:INLB:INHC = 0101
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0, INLB = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1, INHC = 1
+}
+
 void Phase2_CB(void)//INLA:INHB:INLB:INHC = 0100
 {
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0, INLB = 0
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);//INHC = 0
+}
+
+void Phase23_CB_CA(void)//INLA:INHB:INLB:INHC = 1101
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);//INLA = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1, INHC = 1
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);//INLB = 0
 }
 
 void Phase3_CA(void)//INLA:INHB:INLB:INHC = 1100
@@ -97,6 +115,13 @@ void Phase3_CA(void)//INLA:INHB:INLB:INHC = 1100
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);//INHC = 0
 }
 
+void Phase34_CA_BA(void)//INLA:INHB:INLB:INHC = 1001
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);//INLA = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1, INHC = 1
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);//INLB = 0
+}
+
 void Phase4_BA(void)//INLA:INHB:INLB:INHC = 1000
 {
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);//INLA = 1
@@ -104,10 +129,25 @@ void Phase4_BA(void)//INLA:INHB:INLB:INHC = 1000
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);//INLB = 0
 }
 
+void Phase45_BC_AC(void)//INLA:INHB:INLB:INHC = 0011
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);//INLB = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);//INHC = 1
+}
+
 void Phase5_BC(void)//INLA:INHB:INLB:INHC = 1010
 {
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_SET);//INLA = 1, INLB = 1
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0, INHC = 0
+}
+
+void Phase56_AC_AB(void)//INLA:INHB:INLB:INHC = 0111
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1, INHC = 1
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);//INLB = 1
 }
 
 void Phase6_AC(void)//INLA:INHB:INLB:INHC = 0010
@@ -123,18 +163,76 @@ void Phase_Stop(void)//INLA:INHB:INLB:INHC = 0000
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0, INHC = 0
 }
 
+#endif
 
-void Read_DRV8305_REG(void)
+#ifdef one_bit_change
+
+void Phase_Align(void)//INLA:INHB:INLB:INHC = 1110
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15|GPIO_PIN_14, GPIO_PIN_SET);//INLA = 1, INLB = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);//INHC = 0
+}
+
+void Phase1_AB(void)//INLA:INHB:INLB:INHC = 0110
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0
+}
+
+void Phase2_CB(void)//INLA:INHB:INLB:INHC = 0100
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);//INLB = 0
+}
+
+void Phase3_CA(void)//INLA:INHB:INLB:INHC = 1100
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);//INLA = 1
+}
+
+void Phase4_BA(void)//INLA:INHB:INLB:INHC = 1000
+{
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0
+}
+
+void Phase5_BC(void)//INLA:INHB:INLB:INHC = 1010
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);//INLB = 1
+}
+
+void Phase6_AC(void)//INLA:INHB:INLB:INHC = 0010
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);//INLA = 0
+}
+
+void Phase7_AB(void)
+{
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);//INHB = 1
+}
+
+void Phase_Stop(void)//INLA:INHB:INLB:INHC = 0000
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15|GPIO_PIN_14, GPIO_PIN_RESET);//INLA = 0, INLB = 0
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);//INHB = 0, INHC = 0
+}
+
+#endif
+
+void Read_DRV8305_REG(uint8_t Addr)
 {
 	spiTxBuf[0] = 0x00;
-	spiTxBuf[1] = 0xb8;//"0xb8" is read Gate Drive Control (Address = 0x7)
+	spiTxBuf[1] = Addr;//"0xb8" is read Gate Drive Control (Address = 0x7)
 	HAL_SPI_TransmitReceive(&hspi1, spiTxBuf, spiRxBuf, 2, 50);
 	usb_printf("HS_Gate_Drive_Control_REG=%x_%x\r\n",spiRxBuf[1], spiRxBuf[0]);
-	//switch (Addr)
-	//{
-	//	case (0xb8):
-	//		usb_printf("HS_Gate_Drive_Control_REG=%x_%x\r\n",spiRxBuf[1], spiRxBuf[0]);
-	//		break;
-	//}
+	switch (Addr)
+	{
+		case (0xb8):
+			usb_printf("HS_Gate_Drive_Control_REG=%x_%x\r\n",spiRxBuf[1], spiRxBuf[0]);
+			break;
+	}
 
+}
+
+void Delay(__IO uint32_t nCount)
+{
+  for(; nCount != 0; nCount--);
 }
