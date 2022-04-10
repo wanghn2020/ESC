@@ -101,19 +101,43 @@ int main(void)
   MX_DMA_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-  TIM1->CCR3 = 20;//speed = CCR3 / 1024
+  TIM1->CCR3 = 10;//speed = CCR3 / 1024
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
   DRV8305_Init();
+  //HAL_Delay(10);
+
+  Read_DRV8305_REG(HS_Gate_Drive_Control_REG);
+  Phase_Align();
+  HAL_Delay(50);
+  Phase1_AB();
   HAL_Delay(200);
-  for (int i = 0; i<12; i++)
+
+
+  for (uint8_t i = 0; i < 14; i++)
   {
-	  Read_DRV8305_REG(HS_Gate_Drive_Control_REG);
-	  Phase_Align();
-	  HAL_Delay(300);
-	  Phase_Stop();
-	  HAL_Delay(1500);
+
+
+	  Phase2_CB();
+	  HAL_Delay(200);
+
+	  Phase3_CA();
+	  HAL_Delay(200);
+
+	  Phase4_BA();
+	  HAL_Delay(200);
+
+	  Phase5_BC();
+	  HAL_Delay(200);
+
+	  Phase6_AC();
+	  HAL_Delay(200);
+
+	  Phase7_AB();
+	  HAL_Delay(200);
   }
+
+  Phase_Stop();
 
   /* USER CODE END 2 */
 
@@ -124,6 +148,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
 	Clear_DRV8305_Fault();
   }
   /* USER CODE END 3 */
